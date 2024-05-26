@@ -5,7 +5,9 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\GolonganResource\Pages;
 use App\Filament\Resources\GolonganResource\RelationManagers;
 use App\Models\Golongan;
+use App\Models\Jenis;
 use Filament\Forms;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -23,7 +25,9 @@ class GolonganResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('golongan')
+                Forms\Components\TextInput::make('name')
+                    ->required()
+                    ->maxLength(255),
             ]);
     }
 
@@ -31,18 +35,28 @@ class GolonganResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('golongan'),
+                Tables\Columns\TextColumn::make('name')
+                ->label('Golongan')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('created_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('updated_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 //
             ])
             ->actions([
+                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -59,6 +73,7 @@ class GolonganResource extends Resource
         return [
             'index' => Pages\ListGolongans::route('/'),
             'create' => Pages\CreateGolongan::route('/create'),
+            'view' => Pages\ViewGolongan::route('/{record}'),
             'edit' => Pages\EditGolongan::route('/{record}/edit'),
         ];
     }

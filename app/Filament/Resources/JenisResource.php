@@ -6,6 +6,7 @@ use App\Filament\Resources\JenisResource\Pages;
 use App\Filament\Resources\JenisResource\RelationManagers;
 use App\Models\Jenis;
 use Filament\Forms;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -23,10 +24,15 @@ class JenisResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('jenis')
-                ->options([
-                    
-                ]),
+                Forms\Components\Select::make('golongan_id')
+                ->relationship(name: 'golongan', titleAttribute: 'name')
+                ->searchable()
+                ->preload()
+                ->required(),
+                Forms\Components\TextInput::make('name')
+                    ->required()
+                    ->label('Jenis Material')
+                    ->maxLength(255),
             ]);
     }
 
@@ -34,12 +40,27 @@ class JenisResource extends Resource
     {
         return $table
             ->columns([
-                //
+                Tables\Columns\TextColumn::make('golongan.name')
+                ->sortable()
+                ->searchable(),
+                Tables\Columns\TextColumn::make('name')
+                ->label('Jenis Material')
+                ->sortable()
+                ->searchable(),
+                Tables\Columns\TextColumn::make('created_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('updated_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 //
             ])
             ->actions([
+                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
@@ -61,6 +82,7 @@ class JenisResource extends Resource
         return [
             'index' => Pages\ListJenis::route('/'),
             'create' => Pages\CreateJenis::route('/create'),
+            'view' => Pages\ViewJenis::route('/{record}'),
             'edit' => Pages\EditJenis::route('/{record}/edit'),
         ];
     }
