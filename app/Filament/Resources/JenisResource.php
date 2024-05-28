@@ -18,7 +18,13 @@ class JenisResource extends Resource
 {
     protected static ?string $model = Jenis::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-s-document';
+
+    protected static ?string $navigationLabel = 'Jenis';
+
+    protected static ?string $modelLabel = 'Tambah Jenis';
+    
+    protected static ?string $navigationGroup = 'Data WH. Baku';
 
     public static function form(Form $form): Form
     {

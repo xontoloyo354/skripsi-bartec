@@ -27,4 +27,25 @@ class BahanBaku extends Model
     {
         return $this->belongsTo(Jenis::class);
     }
+    public static function boot()
+    {
+        parent::boot();
+        self::creating(function($model){
+        $model->kode_material = self::generateKodeMaterial($model);
+      });
+    }
+    
+    public static function generateKodeMaterial($model)
+{
+    $lastRecord = self::where('golongan_id', $model->golongan_id)
+                      ->where('jenis_id', $model->jenis_id)
+                      ->orderBy('id', 'desc')
+                      ->first();
+
+    $count = $lastRecord ? (int)explode('.', $lastRecord->kode_material)[3] + 1 : 1;
+
+    // Using a placeholder for ID as it is not available yet
+    return '1.' . $model->golongan_id . '.' . $model->jenis_id . '.' . $count;
 }
+
+} 

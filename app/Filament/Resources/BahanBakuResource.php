@@ -37,15 +37,27 @@ class BahanBakuResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('kode_material'),
+                Forms\Components\TextInput::make('kode_material')
+                ->disabled()
+                ->dehydrated(false)
+                ->helperText('Generate Kode'),
+
                 Forms\Components\Select::make('golongan_id') ->label('Golongan')
                 ->options(Golongan::all()->pluck('name', 'id')->toArray()),
+
                 Forms\Components\Select::make('jenis_id') 
                 ->label('Jenis')
                 ->options(Jenis::all()->pluck('name', 'id')->toArray()),
-                Forms\Components\TextInput::make('sub_jenis'),
-                Forms\Components\TextInput::make('material'),
-                Forms\Components\TextInput::make('satuan'),
+
+                Forms\Components\TextInput::make('sub_jenis')
+                ->required(),
+
+                Forms\Components\TextInput::make('material')
+                ->required(),
+
+                Forms\Components\TextInput::make('satuan')
+                ->required(),
+                
             ]);
     }
 
@@ -53,12 +65,25 @@ class BahanBakuResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('id')->label('No'),
+                Tables\Columns\TextColumn::make('id')->label('NO')
+                ->sortable(),
+
                 Tables\Columns\TextColumn::make('kode_material'),
-                Tables\Columns\TextColumn::make('golongan.name'),
-                Tables\Columns\TextColumn::make('jenis.name'),
-                Tables\Columns\TextColumn::make('sub_jenis'),
-                Tables\Columns\TextColumn::make('material'),
+
+                Tables\Columns\TextColumn::make('golongan.name')
+                ->sortable()
+                ->searchable(),
+
+                Tables\Columns\TextColumn::make('jenis.name')
+                ->sortable()
+                ->searchable(),
+
+                Tables\Columns\TextColumn::make('sub_jenis')
+                ->label('Detail Jenis'),
+
+                Tables\Columns\TextColumn::make('material')
+                ->label('Detail Material'),
+
                 Tables\Columns\TextColumn::make('satuan'),
 
             ])
