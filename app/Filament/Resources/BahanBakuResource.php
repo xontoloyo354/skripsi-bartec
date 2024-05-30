@@ -65,8 +65,9 @@ class BahanBakuResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('id')->label('NO')
-                ->sortable(),
+                Tables\Columns\TextColumn::make('nomor')
+                ->sortable()
+                ->label('No'),
 
                 Tables\Columns\TextColumn::make('kode_material'),
 

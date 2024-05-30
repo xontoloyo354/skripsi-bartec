@@ -16,6 +16,7 @@ class BahanBaku extends Model
         'sub_jenis',
         'material',
         'satuan',
+        'nomor',
     ];
     use HasFactory;
 
@@ -30,9 +31,32 @@ class BahanBaku extends Model
     public static function boot()
     {
         parent::boot();
+
+        static::deleted(function ($model) {
+            static::reorderNomor();
+        });
+
+        static::created(function ($model) {
+            static::reorderNomor();
+        });
+
+
         self::creating(function($model){
         $model->kode_material = self::generateKodeMaterial($model);
       });
+    }
+
+    public static function reorderNomor()
+    {
+        $items = static::orderBy('golongan_id')
+                        ->orderBy('jenis_id')         
+                        ->orderBy('created_at')
+                        ->get();
+
+        foreach ($items as $index => $item) {
+            $item->nomor = $index + 1;
+            $item->saveQuietly();
+        }
     }
     
     public static function generateKodeMaterial($model)
@@ -41,11 +65,12 @@ class BahanBaku extends Model
                       ->where('jenis_id', $model->jenis_id)
                       ->orderBy('id', 'desc')
                       ->first();
-
-    $count = $lastRecord ? (int)explode('.', $lastRecord->kode_material)[3] + 1 : 1;
-
-    // Using a placeholder for ID as it is not available yet
+    if ($lastRecord) {
+        $lastKodeMaterial =explode('.', $lastRecord->kode_material);
+        $count = isset($lastKodeMaterial[3]) ? (int)$lastKodeMaterial[3] + 1 : 1;
+        } else {
+            $count = 1;
+        }
     return '1.' . $model->golongan_id . '.' . $model->jenis_id . '.' . $count;
+    }
 }
-
-} 
