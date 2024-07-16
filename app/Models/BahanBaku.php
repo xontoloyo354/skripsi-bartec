@@ -17,6 +17,7 @@ class BahanBaku extends Model
         'material',
         'satuan',
         'nomor',
+        'stock',
     ];
     use HasFactory;
 
@@ -28,6 +29,12 @@ class BahanBaku extends Model
     {
         return $this->belongsTo(Jenis::class);
     }
+
+    public function getNamaBarangAttribute()
+    {
+        return "{$this->golongan->name} - {$this->jenis->name} - {$this->sub_jenis} - {$this->material}";
+    }
+    
     public static function boot()
     {
         parent::boot();

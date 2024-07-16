@@ -68,25 +68,18 @@ class BahanBakuResource extends Resource
                 Tables\Columns\TextColumn::make('nomor')
                 ->sortable()
                 ->label('No'),
-
                 Tables\Columns\TextColumn::make('kode_material'),
-
                 Tables\Columns\TextColumn::make('golongan.name')
                 ->sortable()
                 ->searchable(),
-
                 Tables\Columns\TextColumn::make('jenis.name')
                 ->sortable()
                 ->searchable(),
-
                 Tables\Columns\TextColumn::make('sub_jenis')
                 ->label('Detail Jenis'),
-
                 Tables\Columns\TextColumn::make('material')
                 ->label('Detail Material'),
-
                 Tables\Columns\TextColumn::make('satuan'),
-
             ])
             ->filters([
                 //

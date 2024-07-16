@@ -15,7 +15,7 @@ return new class extends Migration
 
         Schema::create('bahan_bakus', function (Blueprint $table) {
             $table->id();
-            $table->string('kode_material')->unique()->change();
+            $table->string('kode_material');
             $table->foreignId('golongan_id')->constrained()->cascadeOnDelete();
             $table->foreignId('jenis_id')->constrained()->cascadeOnDelete();
             $table->string('sub_jenis')
@@ -24,6 +24,7 @@ return new class extends Migration
             ->nullable();
             $table->string('satuan')
             ->nullable();
+            $table->integer('stock');
             $table->timestamps();
         });
     }
