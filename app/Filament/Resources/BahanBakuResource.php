@@ -57,6 +57,9 @@ class BahanBakuResource extends Resource
 
                 Forms\Components\TextInput::make('satuan')
                 ->required(),
+
+                Forms\Components\TextInput::make('stock')
+                ->label('Stok'),
                 
             ]);
     }
@@ -80,6 +83,10 @@ class BahanBakuResource extends Resource
                 Tables\Columns\TextColumn::make('material')
                 ->label('Detail Material'),
                 Tables\Columns\TextColumn::make('satuan'),
+                Tables\Columns\TextColumn::make('stock')
+                ->label('Stock')
+                ->sortable(),
+
             ])
             ->filters([
                 //

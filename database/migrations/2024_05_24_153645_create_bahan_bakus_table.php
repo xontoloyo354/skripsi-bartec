@@ -24,7 +24,10 @@ return new class extends Migration
             ->nullable();
             $table->string('satuan')
             ->nullable();
-            $table->integer('stock');
+            $table->integer('stock')
+            ->nullable();
+            $table->string('nama_barang')
+            ->nullable();
             $table->timestamps();
         });
     }

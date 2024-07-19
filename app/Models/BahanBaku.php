@@ -18,6 +18,7 @@ class BahanBaku extends Model
         'satuan',
         'nomor',
         'stock',
+        'nama_barang',
     ];
     use HasFactory;
 
@@ -38,6 +39,10 @@ class BahanBaku extends Model
     public static function boot()
     {
         parent::boot();
+
+        static::saving(function ($model) {
+            $model->nama_barang = "{$model->golongan->name} - {$model->jenis->name} - {$model->sub_jenis} - {$model->material}";
+        });
 
         static::deleted(function ($model) {
             static::reorderNomor();

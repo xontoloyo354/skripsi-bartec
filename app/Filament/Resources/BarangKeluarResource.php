@@ -6,12 +6,17 @@ use App\Filament\Resources\BarangKeluarResource\Pages;
 use App\Filament\Resources\BarangKeluarResource\RelationManagers;
 use App\Models\BarangKeluar;
 use Filament\Forms;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Forms\FormsComponent;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Symfony\Component\CssSelector\Node\FunctionNode;
 
 class BarangKeluarResource extends Resource
 {
@@ -24,29 +29,144 @@ class BarangKeluarResource extends Resource
 
     public static function form(Form $form): Form
     {
-        return $form
+                return $form
             ->schema([
-                //
-            ]);
-    }
+                Forms\Components\Section::make('Shipping Details')
+                ->schema([
+                    Forms\Components\Grid::make(1)
+                    ->schema([
+                        Forms\Components\Section::make()
+                    ->schema([
+                        Forms\Components\Grid::make(1)
+                        ->schema([
+                            Forms\Components\TextInput::make('no_surat_keluar')
+                        ->label('No. Surat Keluar')
+                        ->required(),
+                        Forms\Components\Grid::make(2)
+                        ->schema([
+                            Forms\Components\TextInput::make('acuan')
+                        ->label('Acuan')
+                        ->placeholder('Jenis Acuan')
+                        ->required(),
+                    Forms\Components\TextInput::make('no_acuan')
+                        ->label('No. Acuan')
+                        ->placeholder('No. Acuan')
+                        ->required(),
+                                ]),
+                        ]),
+                    ]),
+                    Forms\Components\Section::make()
+                    ->schema([
+                        Forms\Components\Grid::make(3)
+                        ->schema([
+                            Forms\Components\TextInput::make('penerima')
+                            ->label('Penerima')
+                            ->placeholder('Nama Penerima')
+                            ->required(),
+                        Forms\Components\TextInput::make('pengambil')
+                            ->label('Pengambil Barang')
+                            ->placeholder('Nama Pengambil')
+                            ->required(),
+                        Forms\Components\TextInput::make('jabatan')
+                            ->label('Jabatan')
+                            ->placeholder('Jabatan Penerima')
+                            ->required(),
+                        Forms\Components\TextInput::make('security')
+                            ->label('Security')
+                            ->placeholder('Nama security yang mengetahui')
+                            ->required(),
+                        Forms\Components\TextInput::make('kendaraan')
+                            ->label('Kendaraan')
+                            ->placeholder('Jenis Kendaraan')
+                            ->required(),
+                        Forms\Components\TextInput::make('no_plat')
+                            ->label('No. Plat Kendaraan')
+                            ->placeholder('No Plat Kendaraan')
+                            ->required(),
+                        ]) 
+                    ]),
+                    ]),
+                ]),  
+                Forms\Components\Section::make('Barang Details')
+                    ->schema([
+                        Forms\Components\Grid::make(3)
+                        ->schema([
+                        Forms\Components\Select::make('bahan_baku_id')
+                            ->label('Nama Barang')
+                            ->options(function () {
+                                return \App\Models\BahanBaku::all()->pluck('nama_barang', 'id');
+                            })
+                            ->required(),
+                        Forms\Components\TextInput::make('jumlah')
+                            ->required()
+                            ->numeric()
+                            ->placeholder('Masukan jumlah barang yang masuk ')
+                            ->label('Jumlah'),
+                        Forms\Components\TextInput::make('keperluan')
+                            ->label('Keperluan')
+                            ->required(),
+                        ]),
+                    ]),
 
+                ]);
+
+    }
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
-                //
+                TextColumn::make('no_surat_keluar')
+                    ->label('No. Surat Keluar')
+                    ->sortable()
+                    ->searchable(),
+                TextColumn::make('acuan')
+                    ->label('Acuan')
+                    ->sortable()
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('bahanBaku.nama_barang')->label('Nama Barang')->sortable()->searchable()
+                ->getStateUsing(function ($record) {
+                    return $record->bahanBaku->nama_barang;
+                }),
+                TextColumn::make('no_acuan')
+                    ->label('No. Acuan')
+                    ->sortable()
+                    ->searchable(),
+                TextColumn::make('penerima')
+                    ->label('Penerima')
+                    ->sortable()
+                    ->searchable(),
+                TextColumn::make('pengambil')
+                    ->label('Pengambil Barang')
+                    ->sortable()
+                    ->searchable(),
+                TextColumn::make('jabatan')
+                    ->label('Jabatan')
+                    ->sortable()
+                    ->searchable(),
+                TextColumn::make('security')
+                    ->label('Security')
+                    ->sortable()
+                    ->searchable(),
+                TextColumn::make('kendaraan')
+                    ->label('Kendaraan')
+                    ->sortable()
+                    ->searchable(),
+                TextColumn::make('no_plat')
+                    ->label('No. Plat Kendaraan')
+                    ->sortable()
+                    ->searchable(),
             ])
             ->filters([
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
-                ]),
-            ]);
+                ])
+                ]);
     }
 
     public static function getRelations(): array

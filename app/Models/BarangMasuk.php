@@ -20,6 +20,15 @@ class BarangMasuk extends Model
         'no_plat',
     ];
 
+    protected static function booted()
+{
+    static::saved(function ($barangMasuk) {
+        $bahanBaku = $barangMasuk->bahanBaku;
+        $bahanBaku->stock += $barangMasuk->jumlah;
+        $bahanBaku->save();
+    });
+}
+
     protected static function boot()
     {
         parent::boot();

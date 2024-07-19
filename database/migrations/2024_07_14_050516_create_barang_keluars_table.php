@@ -13,6 +13,18 @@ return new class extends Migration
     {
         Schema::create('barang_keluars', function (Blueprint $table) {
             $table->id();
+            $table->string('no_surat_keluar');
+            $table->foreignId('bahan_baku_id');
+            $table->integer('jumlah');
+            $table->string('keperluan');
+            $table->string('acuan');
+            $table->integer('no_acuan');
+            $table->string('penerima');
+            $table->string('pengambil');
+            $table->string('jabatan');
+            $table->string('security');
+            $table->string('kendaraan');
+            $table->string('no_plat');
             $table->timestamps();
         });
     }

@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\BarangMasukResource\Pages;
 use App\Filament\Resources\BarangMasukResource\RelationManagers;
+use App\Models\BahanBaku;
 use App\Models\BarangMasuk;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -36,10 +37,8 @@ class BarangMasukResource extends Resource
                     Forms\Components\Select::make('bahan_baku_id')
                         ->label('Nama Barang')
                         ->options(function () {
-                            return \App\Models\BahanBaku::with(['golongan', 'jenis'])->get()->mapWithKeys(function ($bahanBaku) {
-                                return [$bahanBaku->id => "{$bahanBaku->golongan->name} - {$bahanBaku->jenis->name} - {$bahanBaku->sub_jenis} - {$bahanBaku->material}"];
-                            });
-                        })
+                            return \App\Models\BahanBaku::all()->pluck('nama_barang', 'id');
+                            })
                         ->required(),
                     Forms\Components\TextInput::make('jumlah')
                         ->required()
@@ -78,21 +77,30 @@ class BarangMasukResource extends Resource
                                 ->columnSpan(1),
                         ]),
                 ]),
-        ]);
+            
+            ]);
+        
 }
 
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('no_surat_masuk')->label('No. Surat Masuk'),
-                Tables\Columns\TextColumn::make('bahanBaku.nama_barang')->label('Nama Barang'),
-                Tables\Columns\TextColumn::make('no_surat_jalan')->label('No. Surat Jalan'),
-                Tables\Columns\TextColumn::make('pembawa')->label('Pembawa'),
-                Tables\Columns\TextColumn::make('posisi')->label('Posisi'),
-                Tables\Columns\TextColumn::make('kendaraan')->label('Kendaraan'),
-                Tables\Columns\TextColumn::make('no_plat')->label('No Plat'),
-                Tables\Columns\TextColumn::make('jumlah')->label('Jumlah'),
+                Tables\Columns\TextColumn::make('no_surat_masuk')->label('No. Surat Masuk')
+                ->searchable(),
+                Tables\Columns\TextColumn::make('bahanBaku.nama_barang')->label('Nama Barang')
+                ->searchable()
+                ->getStateUsing(function ($record) {
+                    return $record->bahanBaku->nama_barang;
+                }),
+                Tables\Columns\TextColumn::make('no_surat_jalan')->label('No. Surat Jalan')
+                ->searchable(),
+                Tables\Columns\TextColumn::make('pembawa')->label('Pembawa')
+                ->searchable(),
+                Tables\Columns\TextColumn::make('posisi')->label('Posisi')->searchable()->sortable(),
+                Tables\Columns\TextColumn::make('kendaraan')->label('Kendaraan')->searchable(),
+                Tables\Columns\TextColumn::make('no_plat')->label('No Plat')->searchable(),
+                Tables\Columns\TextColumn::make('jumlah')->label('Jumlah')->searchable(),
             ])
             ->filters([
                 //
