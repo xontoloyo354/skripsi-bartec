@@ -9,6 +9,7 @@ use Filament\Forms;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Forms\FormsComponent;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
@@ -109,7 +110,6 @@ class BarangKeluarResource extends Resource
                     ]),
 
                 ]);
-
     }
     public static function table(Table $table): Table
     {
@@ -183,5 +183,56 @@ class BarangKeluarResource extends Resource
             'create' => Pages\CreateBarangKeluar::route('/create'),
             'edit' => Pages\EditBarangKeluar::route('/{record}/edit'),
         ];
+    }
+}
+namespace App\Filament\Resources\BarangKeluarResource\Pages;
+
+use App\Filament\Resources\BarangKeluarResource;
+use App\Models\BahanBaku;
+use Filament\Resources\Pages\CreateRecord;
+use Filament\Resources\Pages\EditRecord;
+use Filament\Notifications\Notification;
+
+class CreateBarangKeluar extends CreateRecord
+{
+    protected static string $resource = BarangKeluarResource::class;
+
+    protected function mutateFormDataBeforeCreate(array $data): array
+    {
+        $bahanBaku = BahanBaku::find($data['bahan_baku_id']);
+
+        if ($bahanBaku && $bahanBaku->stock < $data['jumlah']) {
+            Notification::make()
+                ->title('Stok Habis')
+                ->body('Stok bahan baku tidak mencukupi untuk jumlah barang yang ingin dikeluarkan.')
+                ->danger()
+                ->send();
+
+            $this->halt(); // Menghentikan proses penyimpanan data
+        }
+
+        return $data;
+    }
+}
+
+class EditBarangKeluar extends EditRecord
+{
+    protected static string $resource = BarangKeluarResource::class;
+
+    protected function mutateFormDataBeforeSave(array $data): array
+    {
+        $bahanBaku = BahanBaku::find($data['bahan_baku_id']);
+
+        if ($bahanBaku && $bahanBaku->stock < $data['jumlah']) {
+            Notification::make()
+                ->title('Stok Habis')
+                ->body('Stok bahan baku tidak mencukupi untuk jumlah barang yang ingin dikeluarkan.')
+                ->danger()
+                ->send();
+
+            $this->halt(); // Menghentikan proses penyimpanan data
+        }
+
+        return $data;
     }
 }
