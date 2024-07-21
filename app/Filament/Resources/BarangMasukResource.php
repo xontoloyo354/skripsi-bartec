@@ -39,7 +39,8 @@ class BarangMasukResource extends Resource
                         ->options(function () {
                             return \App\Models\BahanBaku::all()->pluck('nama_barang', 'id');
                             })
-                        ->required(),
+                        ->required()
+                        ->preload(),
                     Forms\Components\TextInput::make('jumlah')
                         ->required()
                         ->numeric()
@@ -132,4 +133,4 @@ class BarangMasukResource extends Resource
             'edit' => Pages\EditBarangMasuk::route('/{record}/edit'),
         ];
     }
-}
+}   

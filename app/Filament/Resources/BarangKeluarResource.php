@@ -9,6 +9,9 @@ use Filament\Forms;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Forms\FormsComponent;
+use Filament\Infolists\Components\Section;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Infolist;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -56,7 +59,7 @@ class BarangKeluarResource extends Resource
                                 ]),
                         ]),
                     ]),
-                    Forms\Components\Section::make()
+                    Forms\Components\Section::make('Identitas')
                     ->schema([
                         Forms\Components\Grid::make(3)
                         ->schema([
@@ -97,7 +100,8 @@ class BarangKeluarResource extends Resource
                             ->options(function () {
                                 return \App\Models\BahanBaku::all()->pluck('nama_barang', 'id');
                             })
-                            ->required(),
+                            ->required()
+                            ->preload(),
                         Forms\Components\TextInput::make('jumlah')
                             ->required()
                             ->numeric()
@@ -160,7 +164,8 @@ class BarangKeluarResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make()
+                Tables\Actions\EditAction::make(),
+                Tables\Actions\ViewAction::make()
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -176,12 +181,39 @@ class BarangKeluarResource extends Resource
         ];
     }
 
+    public static function infolist(Infolist $infolist): Infolist
+{
+    return $infolist
+        ->schema([
+            Section::make('Barang Details')
+            ->schema([
+                TextEntry::make('bahanBaku.nama_barang')
+            ]),
+            Section::make('Shipping Details')
+            ->schema([
+                TextEntry::make('no_surat_keluar')->label('No Surat Keluar'),
+                TextEntry::make('acuan')->label('Acuan'),
+                TextEntry::make('no_acuan'),
+            ])->columns(2),
+            Section::make('Identitas')
+            ->schema([
+                TextEntry::make('penerima'),
+                TextEntry::make('pengambil'),
+                TextEntry::make('jabatan'),
+                TextEntry::make('security'),
+                TextEntry::make('kendaraan'),
+                TextEntry::make('no_plat'),
+            ])->columns(3)
+        ]);
+}
+
     public static function getPages(): array
     {
         return [
             'index' => Pages\ListBarangKeluars::route('/'),
             'create' => Pages\CreateBarangKeluar::route('/create'),
-            'edit' => Pages\EditBarangKeluar::route('/{record}/edit'),
+            'edit' => Pages\EditBarangKeluar::route('/{record}/edit')
+            ,
         ];
     }
 }
