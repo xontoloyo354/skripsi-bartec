@@ -10,6 +10,8 @@ class BarangKeluar extends Model
 {
     use HasFactory;
 
+    protected $table = 'barang_keluars';
+
     protected $fillable = [
        'no_surat_keluar',
        'bahan_baku_id',

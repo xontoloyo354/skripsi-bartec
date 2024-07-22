@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -20,5 +21,13 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         //
+    }
+}
+class PdfService
+{
+    public function generateBarangMasukPdf($barangMasuk)
+    {
+        $pdf = Pdf::loadView('pdf.barang_masuk', ['barangMasuk' => $barangMasuk]);
+        return $pdf->download('barang_masuk_' . $barangMasuk->no_surat_masuk . '.pdf');
     }
 }

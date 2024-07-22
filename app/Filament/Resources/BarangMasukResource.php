@@ -10,9 +10,12 @@ use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Enums\FiltersLayout;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Carbon;
 
 class BarangMasukResource extends Resource
 {
@@ -21,6 +24,11 @@ class BarangMasukResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     protected static ?string $navigationGroup = 'Form';
+
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
+    }
 
 
     public static function form(Form $form): Form
@@ -99,16 +107,48 @@ class BarangMasukResource extends Resource
                 Tables\Columns\TextColumn::make('pembawa')->label('Pembawa')
                 ->searchable(),
                 Tables\Columns\TextColumn::make('posisi')->label('Posisi')->searchable()->sortable(),
-                Tables\Columns\TextColumn::make('kendaraan')->label('Kendaraan')->searchable(),
-                Tables\Columns\TextColumn::make('no_plat')->label('No Plat')->searchable(),
+                Tables\Columns\TextColumn::make('kendaraan')->label('Kendaraan')->searchable()
+                ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('no_plat')->label('No Plat')->searchable()
+                ->toggleable(isToggledHiddenByDefault: true)
+                ,
                 Tables\Columns\TextColumn::make('jumlah')->label('Jumlah')->searchable(),
             ])
             ->filters([
-                //
-            ])
+            Filter::make('created_at')
+                ->form([
+                    Forms\Components\DatePicker::make('created_from'),
+                    Forms\Components\DatePicker::make('created_until'),
+                    ])
+            ->query(function (Builder $query, array $data): Builder {
+                return $query
+            ->when(
+                $data['created_from'],
+                fn (Builder $query, $date): Builder => $query->whereDate('created_at', '>=', $date),
+            )
+            ->when(
+                $data['created_until'],
+                fn (Builder $query, $date): Builder => $query->whereDate('created_at', '<=', $date),
+            );
+            })
+            ->indicateUsing(function (array $data): array {
+                $indicators = [];
+                if ($data['created_from'] ?? null) {
+                    $indicators['created_from'] = 'Created from ' . Carbon::parse($data['created_from'])->toFormattedDateString();
+                }
+                if ($data['created_until'] ?? null) {
+                    $indicators['created_until'] = 'Created until ' . Carbon::parse($data['created_until'])->toFormattedDateString();
+                }
+                return $indicators;
+            })->columnSpan(2)->columns(2)
+        ],layout:FiltersLayout::AboveContent)->filtersFormColumns(2)
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\ViewAction::make(),
+                Tables\Actions\Action::make('print')
+                ->label('Print PDF')
+                ->icon('heroicon-o-printer')
+                ->url(fn($record) => route('barang-masuk.print', $record->id)),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -129,7 +169,6 @@ class BarangMasukResource extends Resource
         return [
             'index' => Pages\ListBarangMasuks::route('/'),
             'create' => Pages\CreateBarangMasuk::route('/create'),
-            'view' => Pages\ViewBarangMasuk::route('/{record}'),
             'edit' => Pages\EditBarangMasuk::route('/{record}/edit'),
         ];
     }

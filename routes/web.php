@@ -1,6 +1,9 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\BarangMasukPdfController;
+
+
 
 /*
 |--------------------------------------------------------------------------
@@ -16,3 +19,11 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+Route::get('/barang-masuk/print/{id}', [BarangMasukPDFController::class, 'print'])->name('barang-masuk.print');
+
+
+
+
+
+
+
