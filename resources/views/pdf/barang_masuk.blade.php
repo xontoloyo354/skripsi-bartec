@@ -79,11 +79,11 @@
     <table class="header-table">
         <tr>
             <th>Nomor :</th>
-            <td>{{ $barangMasuk->no_surat_masuk }}</td>
+            <td>{{ $firstBarangMasuk ? $firstBarangMasuk->no_surat_masuk : '-' }}</td>
         </tr>
         <tr>
             <th>Tanggal :</th>
-            <td>{{ $barangMasuk->created_at->format('d/M/Y') }}</td>
+            <td>{{ now()->format('d/M/Y') }}</td>
         </tr>
         <tr>
             <th>Kepada :</th>
@@ -112,9 +112,9 @@
             </tr>
         </thead>
         <tbody>
-            @foreach($barangMasukList as $index => $item)
+            @foreach($barangMasuks as $item)
             <tr>
-                <td>{{ $index + 1 }}</td>
+                <td>{{ $loop->iteration}}</td>
                 <td>{{ $item->created_at->format('d/m/Y') }}</td>
                 <td>{{ $item->no_surat_jalan }}</td>
                 <td>{{ $item->bahanBaku->kode_material}}</td> <!-- Sesuaikan jika ada relasi ke nama bahan baku -->
@@ -141,5 +141,33 @@
             <td class="no-border"><br><br>Yogi Widi H</td>
         </tr>
     </table>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(document).ready(function() {
+    $(document).on('click', '.action-print', function(e) {
+        e.preventDefault();
+        
+        let url = $(this).attr('href');
+        
+        $.ajax({
+            url: url,
+            type: 'GET',
+            success: function(response) {
+                // Process the PDF data or update DOM as needed
+                console.log(response);
+                
+                // If your controller generates and returns a PDF, you may want to open it in a new tab
+                // This is a simple example assuming the PDF is generated and accessible via a URL
+                window.open('/path/to/generated/pdf', '_blank');
+            },
+            error: function(xhr) {
+                console.error('Error:', xhr.responseText);
+            }
+        });
+    });
+});
+</script>
+
 </body>
 </html>

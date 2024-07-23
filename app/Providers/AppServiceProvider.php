@@ -23,11 +23,3 @@ class AppServiceProvider extends ServiceProvider
         //
     }
 }
-class PdfService
-{
-    public function generateBarangMasukPdf($barangMasuk)
-    {
-        $pdf = Pdf::loadView('pdf.barang_masuk', ['barangMasuk' => $barangMasuk]);
-        return $pdf->download('barang_masuk_' . $barangMasuk->no_surat_masuk . '.pdf');
-    }
-}

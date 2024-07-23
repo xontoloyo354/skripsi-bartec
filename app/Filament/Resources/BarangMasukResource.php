@@ -30,7 +30,6 @@ class BarangMasukResource extends Resource
         return static::getModel()::count();
     }
 
-
     public static function form(Form $form): Form
 {
     return $form
@@ -117,8 +116,8 @@ class BarangMasukResource extends Resource
             ->filters([
             Filter::make('created_at')
                 ->form([
-                    Forms\Components\DatePicker::make('created_from'),
-                    Forms\Components\DatePicker::make('created_until'),
+                    Forms\Components\DatePicker::make('created_from')->label('Mulai Tanggal'),
+                    Forms\Components\DatePicker::make('created_until')->label('Sampai Tanggal'),
                     ])
             ->query(function (Builder $query, array $data): Builder {
                 return $query
@@ -140,15 +139,21 @@ class BarangMasukResource extends Resource
                     $indicators['created_until'] = 'Created until ' . Carbon::parse($data['created_until'])->toFormattedDateString();
                 }
                 return $indicators;
-            })->columnSpan(2)->columns(2)
-        ],layout:FiltersLayout::AboveContent)->filtersFormColumns(2)
+            })
+        ],)
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()
+                ->slideOver(),
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\Action::make('print')
-                ->label('Print PDF')
-                ->icon('heroicon-o-printer')
-                ->url(fn($record) => route('barang-masuk.print', $record->id)),
+                    ->label('PDF')
+                    ->icon('heroicon-o-printer')
+                    ->url(fn() => route('printAll', [
+                        'created_from' => request('tableFilters')['created_at']['created_from'] ?? null,
+                        'created_until' => request('tableFilters')['created_at']['created_until'] ?? null,
+                        // 't' => time(),
+                    ]))
+                    ->action('action-print'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -172,4 +177,6 @@ class BarangMasukResource extends Resource
             'edit' => Pages\EditBarangMasuk::route('/{record}/edit'),
         ];
     }
+
+   
 }   

@@ -19,7 +19,7 @@ use App\Http\Controllers\BarangMasukPdfController;
 Route::get('/', function () {
     return view('welcome');
 });
-Route::get('/barang-masuk/print/{id}', [BarangMasukPDFController::class, 'print'])->name('barang-masuk.print');
+Route::get('/barang-masuk/print/', [BarangMasukPDFController::class, 'printAll'])->name('printAll');
 
 
 
