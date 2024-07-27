@@ -21,6 +21,8 @@ return new class extends Migration
             $table->string('kendaraan');
             $table->string('posisi');
             $table->string('no_plat');
+            $table->string('lokasi');
+            $table->string('kepada');
             $table->timestamps();
         });
     }

@@ -6,6 +6,7 @@ use App\Filament\Resources\BarangMasukResource\Pages;
 use App\Filament\Resources\BarangMasukResource\RelationManagers;
 use App\Models\BahanBaku;
 use App\Models\BarangMasuk;
+use Filament\Actions\Action;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -83,6 +84,16 @@ class BarangMasukResource extends Resource
                                 ->label('No Plat')
                                 ->placeholder('No plat kendaraan')
                                 ->columnSpan(1),
+                                Forms\Components\TextInput::make('lokasi')
+                                ->required()
+                                ->label('Lokasi')
+                                ->placeholder('Lokasi')
+                                ->columnSpan(1),
+                                Forms\Components\TextInput::make('kepada')
+                                ->required()
+                                ->label('Kepada')
+                                ->placeholder('Kepada')
+                                ->columnSpan(2),
                         ]),
                 ]),
             
@@ -112,6 +123,7 @@ class BarangMasukResource extends Resource
                 ->toggleable(isToggledHiddenByDefault: true)
                 ,
                 Tables\Columns\TextColumn::make('jumlah')->label('Jumlah')->searchable(),
+                Tables\Columns\TextColumn::make('lokasi')->label('Lokasi')->searchable(),
             ])
             ->filters([
             Filter::make('created_at')
@@ -140,20 +152,24 @@ class BarangMasukResource extends Resource
                 }
                 return $indicators;
             })
-        ],)
+        ])->headerActions([
+            Tables\Actions\Action::make('print')
+            ->label('PDF')
+            ->icon('heroicon-o-printer')
+            ->url(fn() => route('printAll', [
+                'created_from' => request('tableFilters')['created_at']['created_from'] ?? null,
+                'created_until' => request('tableFilters')['created_at']['created_until'] ?? null,
+                // 't' => time(),
+            ]))
+        ])
             ->actions([
-                Tables\Actions\EditAction::make()
-                ->slideOver(),
+                Tables\Actions\ActionGroup::make([
+                Tables\Actions\EditAction::make(),
                 Tables\Actions\ViewAction::make(),
-                Tables\Actions\Action::make('print')
-                    ->label('PDF')
-                    ->icon('heroicon-o-printer')
-                    ->url(fn() => route('printAll', [
-                        'created_from' => request('tableFilters')['created_at']['created_from'] ?? null,
-                        'created_until' => request('tableFilters')['created_at']['created_until'] ?? null,
-                        // 't' => time(),
-                    ]))
-                    ->action('action-print'),
+                Tables\Actions\Action::make('Pdf')->label('Cetak')->icon('heroicon-m-printer')
+                    ->url(fn(BarangMasuk $record) => route('download.pdf', $record))
+                    ->openUrlInNewTab(),
+                ])
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

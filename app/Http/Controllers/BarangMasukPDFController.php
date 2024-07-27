@@ -14,56 +14,14 @@ use Illuminate\Support\Facades\View;
 
 class BarangMasukPDFController extends Controller
 {
-    // public function print($id)
-    // {
-    //     $barangMasuk = BarangMasuk::with('bahanBaku')->findOrFail($id);
-    //     $barangMasukList = BarangMasuk::with('bahanBaku')->get();
 
-    //     $pdf = PDF::loadView('pdf.barang_masuk', compact('barangMasuk', 'barangMasukList'));
-    //     return $pdf->download('Surat_Barang_Masuk.pdf');
-
-    //     set_time_limit(300);
-    // }
-
-    // public function printAll(Request $request)
-    // {
-    //     $filters = $request->only(['created_from', 'created_until']);
-
-    //     $barangMasukQuery = BarangMasuk::query();
-
-    //     if (!empty($filters['created_from'])) {
-    //         $barangMasukQuery->whereDate('created_at', '>=', $filters['created_from']);
-    //     }
-    
-    //     if (!empty($filters['created_until'])) {
-    //         $barangMasukQuery->whereDate('created_at', '<=', $filters['created_until']);
-    //     }
-
-    //     $finalQuery = $barangMasukQuery->toSql();
-    //     Log::info('BarangMasuk query: ' . $finalQuery, $barangMasukQuery->getBindings());
-        
-
-    //     $barangMasuks = $barangMasukQuery->with('bahanBaku')->get();
-    //     $firstBarangMasuk = $barangMasuks->first();
-
-
-    //     Log::info('Filtered BarangMasuk count: ' . $barangMasuks->count());
-
-    //     $pdf = PDF::loadView('pdf.barang_masuk', compact('barangMasuks','firstBarangMasuk'));
-    //     return $pdf->stream('barang-masuk.pdf');
-    // }
     public function printAll(Request $request)
 {
-    Cache::forget('barangMasukQuery');
 
     $format = $request->get('format', 'pdf');
-
     $filters = $request->only(['created_from', 'created_until']);
-    Log::info('Filters: ', $filters);
 
     $barangMasukQuery = BarangMasuk::query();
-
-    
 
     if (!empty($filters['created_from'])) {
         $fromDate = Carbon::parse($filters['created_from'])->startOfDay();
@@ -73,14 +31,13 @@ class BarangMasukPDFController extends Controller
     if (!empty($filters['created_until'])) {
         $untilDate = Carbon::parse($filters['created_until'])->endOfDay();
         $barangMasukQuery->where('created_at', '<=', $untilDate);
+        Log::info('Filtering until date:', ['untilDate' => $untilDate]);
     }
 
-    $barangMasuks = $barangMasukQuery->with('bahanBaku')->get();
+    $barangMasuks = $barangMasukQuery->with('bahanBaku')->get();   
     $firstBarangMasuk = $barangMasuks->first();
 
-    // dd($barangMasuks);
-    // dd($barangMasukQuery->toSql(), $barangMasukQuery->getBindings());
-    // Log::info('Filtered BarangMasuk count: ' . $barangMasuks->count());
+    // dd($firstBarangMasuk);
 
     if ($format === 'pdf') {
         $pdf = PDF::loadView('pdf.barang_masuk', compact('barangMasuks', 'firstBarangMasuk'));
@@ -96,8 +53,19 @@ class BarangMasukPDFController extends Controller
     
 }
 
-public function barangmasukPdf($id)
+public function downloadPdf($id)
 {
+    // Fetch the data for the PDF
+    $barangMasuk = BarangMasuk::find($id);
+    if (!$barangMasuk) {
+        return abort(404, 'Barang Masuk not found');
+    }
 
+    $barangMasuks = BarangMasuk::where('id', $id)->with('bahanBaku')->get();
+    $firstBarangMasuk = $barangMasuks->first();
+
+    // Generate PDF
+    $pdf = Pdf::loadView('pdf.barang_masuk', compact('barangMasuks', 'firstBarangMasuk'));
+    return $pdf->stream('barang-masuk.pdf');
 }
 }

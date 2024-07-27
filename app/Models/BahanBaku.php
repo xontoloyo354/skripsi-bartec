@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Filament\Notifications\Notification;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -56,6 +57,17 @@ class BahanBaku extends Model
         self::creating(function($model){
         $model->kode_material = self::generateKodeMaterial($model);
       });
+
+      static::created(function ($bahanBaku) {
+        $users = User::where('name', 'Bartec')->get();
+
+        foreach ($users as $user) {
+            Notification::make($bahanBaku)
+                ->title('New Bahan Baku Created')
+                ->body('A new Bahan Baku  has been created.')
+                ->sendToDatabase($user);
+        }
+    });
     }
 
     public static function reorderNomor()
@@ -84,5 +96,12 @@ class BahanBaku extends Model
             $count = 1;
         }
     return '1.' . $model->golongan_id . '.' . $model->jenis_id . '.' . $count;
+    }
+
+    protected static function booted()
+    {
+        parent::boot();
+
+        
     }
 }

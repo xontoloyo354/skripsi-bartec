@@ -35,6 +35,8 @@ class AdminPanelProvider extends PanelProvider
             'success' => Color::Emerald,
             'warning' => Color::Orange,
             ])
+            ->databaseNotifications()
+            ->databaseNotificationsPolling('120s')
             ->favicon(asset('images/buma.png'))
             ->brandLogo(asset('images/buma.png'))
             ->brandLogoHeight('3rem')
@@ -62,5 +64,8 @@ class AdminPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ]);
+
+            
+
     }
 }

@@ -13,12 +13,14 @@ use Filament\Forms\FormsComponent;
 use Filament\Forms\Get;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Actions\ExportBulkAction;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Collection;
 use NunoMaduro\Collision\Adapters\Phpunit\State;
 use PhpParser\ErrorHandler\Collecting;
+use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction as TablesExportBulkAction;
 
 class BahanBakuResource extends Resource
 {
@@ -97,13 +99,17 @@ class BahanBakuResource extends Resource
                 //
             ])
             ->actions([
+                Tables\Actions\ActionGroup::make([
                 Tables\Actions\EditAction::make()
                 ->slideOver(),
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\DeleteAction::make(),
+                ]),
+                
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
+                    TablesExportBulkAction::make(),
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);

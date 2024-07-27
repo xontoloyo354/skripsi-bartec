@@ -20,6 +20,8 @@ class BarangMasuk extends Model
         'kendaraan',
         'posisi',
         'no_plat',
+        'lokasi',
+        'kepada',
     ];
 
     protected static function booted()

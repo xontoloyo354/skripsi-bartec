@@ -25,6 +25,7 @@ return new class extends Migration
             $table->string('security');
             $table->string('kendaraan');
             $table->string('no_plat');
+            $table->string('tujuan');
             $table->timestamps();
         });
     }

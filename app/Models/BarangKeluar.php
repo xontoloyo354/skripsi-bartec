@@ -25,6 +25,7 @@ class BarangKeluar extends Model
        'security',
        'kendaraan',
        'no_plat',
+       'tujuan',
     ];
 
     public function bahanBaku()

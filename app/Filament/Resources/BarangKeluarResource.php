@@ -53,7 +53,7 @@ class BarangKeluarResource extends Resource
                             Forms\Components\TextInput::make('no_surat_keluar')
                         ->label('No. Surat Keluar')
                         ->required(),
-                        Forms\Components\Grid::make(2)
+                        Forms\Components\Grid::make(3)
                         ->schema([
                             Forms\Components\TextInput::make('acuan')
                         ->label('Acuan')
@@ -63,6 +63,10 @@ class BarangKeluarResource extends Resource
                         ->label('No. Acuan')
                         ->placeholder('No. Acuan')
                         ->required(),
+                    Forms\Components\TextInput::make('tujuan')
+                    ->label('Tujuan')
+                    ->placeholder('Tujuan')
+                    ->required(),        
                                 ]),
                         ]),
                     ]),
@@ -134,18 +138,19 @@ class BarangKeluarResource extends Resource
                     ->label('Acuan')
                     ->sortable()
                     ->searchable(),
+                    TextColumn::make('no_acuan')
+                    ->label('No. Acuan')
+                    ->sortable()
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('bahanBaku.nama_barang')->label('Nama Barang')->sortable()->searchable()
                 ->getStateUsing(function ($record) {
                     return $record->bahanBaku->nama_barang;
                 }),
-                TextColumn::make('no_acuan')
-                    ->label('No. Acuan')
-                    ->sortable()
-                    ->searchable(),
                 TextColumn::make('penerima')
                     ->label('Penerima')
                     ->sortable()
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('pengambil')
                     ->label('Pengambil Barang')
                     ->sortable()
@@ -153,19 +158,31 @@ class BarangKeluarResource extends Resource
                 TextColumn::make('jabatan')
                     ->label('Jabatan')
                     ->sortable()
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('security')
                     ->label('Security')
                     ->sortable()
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('kendaraan')
                     ->label('Kendaraan')
                     ->sortable()
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('no_plat')
                     ->label('No. Plat Kendaraan')
                     ->sortable()
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('jumlah')
+                ->label('Jumlah')
+                ->sortable()
+                ->searchable(),
+                TextColumn::make('tujuan')
+                ->label('Tujuan')
+                ->sortable()
+                ->searchable(),
             ])
             ->filters([
                 Filter::make('created_at')
@@ -193,17 +210,31 @@ class BarangKeluarResource extends Resource
                     $indicators['created_until'] = 'Created until ' . Carbon::parse($data['created_until'])->toFormattedDateString();
                 }
                 return $indicators;
-            })->columnSpan(2)->columns(2)
-        ],layout:FiltersLayout::AboveContent)->filtersFormColumns(2)
+            })
+        ])->headerActions([
+            Tables\Actions\Action::make('print')
+            ->label('PDF')
+            ->icon('heroicon-o-printer')
+            ->url(fn() => route('printOutAll', [
+                'created_from' => request('tableFilters')['created_at']['created_from'] ?? null,
+                'created_until' => request('tableFilters')['created_at']['created_until'] ?? null,
+                // 't' => time(),
+            ]))
+        ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\ViewAction::make()
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\EditAction::make(),
+                    Tables\Actions\ViewAction::make(),
+                    Tables\Actions\Action::make('Pdf')->label('Cetak')->icon('heroicon-m-printer')
+                    ->url(fn(BarangKeluar $record) => route('downloadOut.pdf', $record))
+                    ->openUrlInNewTab(),
+                ])
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ])
-                ]);
+            ]);
     }
 
     public static function getRelations(): array
@@ -226,6 +257,7 @@ class BarangKeluarResource extends Resource
                 TextEntry::make('no_surat_keluar')->label('No Surat Keluar'),
                 TextEntry::make('acuan')->label('Acuan'),
                 TextEntry::make('no_acuan'),
+                TextEntry::make('tujuan'),
             ])->columns(2),
             Section::make('Identitas')
             ->schema([
@@ -236,7 +268,7 @@ class BarangKeluarResource extends Resource
                 TextEntry::make('kendaraan'),
                 TextEntry::make('no_plat'),
             ])->columns(3)
-        ]);
+            ]);
 }
 
     public static function getPages(): array

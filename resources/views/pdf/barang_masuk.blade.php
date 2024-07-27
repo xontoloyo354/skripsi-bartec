@@ -87,7 +87,7 @@
         </tr>
         <tr>
             <th>Kepada :</th>
-            <td>-</td>
+            <td>{{ $firstBarangMasuk ? $firstBarangMasuk->kepada : '-' }}</td>
         </tr>
         <tr>
             <th>Revisi :</th>
@@ -107,8 +107,7 @@
                 <th>Satuan</th>
                 <th>Golongan</th>
                 <th>Pembawa</th>
-                <th>Posisi</th>
-                <th>No Plat Kendaraan</th>
+                <th>Lokasi</th>
             </tr>
         </thead>
         <tbody>
@@ -123,8 +122,7 @@
                 <td>{{ $item->bahanBaku->satuan }}</td>
                 <td>{{ $item->bahanBaku->golongan->name }}</td>
                 <td>{{ $item->pembawa }}</td>
-                <td>{{ $item->posisi }}</td>
-                <td>{{ $item->no_plat }}</td>
+                <td>{{ $item->lokasi }}</td>
             </tr>
             @endforeach
         </tbody>
@@ -142,32 +140,6 @@
         </tr>
     </table>
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script>
-$(document).ready(function() {
-    $(document).on('click', '.action-print', function(e) {
-        e.preventDefault();
-        
-        let url = $(this).attr('href');
-        
-        $.ajax({
-            url: url,
-            type: 'GET',
-            success: function(response) {
-                // Process the PDF data or update DOM as needed
-                console.log(response);
-                
-                // If your controller generates and returns a PDF, you may want to open it in a new tab
-                // This is a simple example assuming the PDF is generated and accessible via a URL
-                window.open('/path/to/generated/pdf', '_blank');
-            },
-            error: function(xhr) {
-                console.error('Error:', xhr.responseText);
-            }
-        });
-    });
-});
-</script>
 
 </body>
 </html>
