@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Filament\Notifications\Actions\Action;
 use Filament\Notifications\Notification;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -64,12 +65,37 @@ class BahanBaku extends Model
         foreach ($users as $user) {
             Notification::make($bahanBaku)
                 ->title('New Bahan Baku Created')
+                ->icon('heroicon-o-plus-circle')
                 ->body('A new Bahan Baku  has been created.')
                 ->sendToDatabase($user);
         }
     });
-    }
+    static::updated(function ($bahanBaku) {
+        try {
+            $lowStockItems = BahanBaku::where('stock', '<=', 10)->count();
+            $users = User::where('name', 'Bartec')->get();
 
+            foreach ($users as $user) {
+                Notification::make()
+                    ->title('Bahan Baku Updated')
+                    ->success()
+                    ->icon('heroicon-o-exclamation-circle')
+                    ->iconColor('warning')
+                    ->body("There are {$lowStockItems} items with low stock.")
+                    ->actions([
+                        Action::make('view')
+                            ->button()
+                            ->url(route('filament.admin.resources.bahan-bakus.index'),shouldOpenInNewTab: true) // Adjust this route as necessary
+                            ->markAsRead(),
+                        ])
+                    ->sendToDatabase($user);
+            }
+        } catch (\Exception $e) {
+            // Handle the exception
+            // Log the error or take necessary action
+        }
+    });
+}
     public static function reorderNomor()
     {
         $items = static::orderBy('golongan_id')
