@@ -46,7 +46,7 @@ class BarangMasuk extends Model
     {
         $latestRecord = self::latest()->first();
         $number = $latestRecord ? intval(substr($latestRecord->no_surat_masuk, -5)) + 1 : 1;
-        return 'NSM-' . str_pad($number, 5, '0', STR_PAD_LEFT);
+        return 'BB/IN' . str_pad($number, 5, '0', STR_PAD_LEFT);
     }
 
     public function bahanBaku()

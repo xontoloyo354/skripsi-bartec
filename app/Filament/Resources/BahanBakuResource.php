@@ -64,10 +64,6 @@ class BahanBakuResource extends Resource
 
                 Forms\Components\TextInput::make('satuan')
                 ->required(),
-
-                Forms\Components\TextInput::make('stock')
-                ->label('Stok'),
-                
             ]);
     }
 

@@ -38,11 +38,12 @@ class BahanBaku extends Model
         return "{$this->golongan->name} - {$this->jenis->name} - {$this->sub_jenis} - {$this->material}";
     }
     
-    public static function boot()
+    public static function booted()
     {
         parent::boot();
 
         static::saving(function ($model) {
+            $model->kode_material = self::generateKodeMaterial($model);
             $model->nama_barang = "{$model->golongan->name} - {$model->jenis->name} - {$model->sub_jenis} - {$model->material}";
         });
 
@@ -124,10 +125,4 @@ class BahanBaku extends Model
     return '1.' . $model->golongan_id . '.' . $model->jenis_id . '.' . $count;
     }
 
-    protected static function booted()
-    {
-        parent::boot();
-
-        
-    }
 }

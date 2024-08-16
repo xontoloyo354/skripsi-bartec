@@ -21,7 +21,7 @@
                     extract($args, EXTR_SKIP);
                     ob_start(); ?>
         
-    <!--[if BLOCK]><![endif]--><?php if($logo instanceof \Illuminate\Contracts\Support\Htmlable): ?>
+    <?php if($logo instanceof \Illuminate\Contracts\Support\Htmlable): ?>
         <div
             <?php echo e($attributes
                     ->class([$getLogoClasses($isDarkMode)])
@@ -52,7 +52,7 @@
             <?php echo e($brandName); ?>
 
         </div>
-    <?php endif; ?><!--[if ENDBLOCK]><![endif]-->
+    <?php endif; ?>
 
             <?php return new \Illuminate\Support\HtmlString(ob_get_clean()); };
                 })(get_defined_vars()); ?>
@@ -61,8 +61,8 @@
 <?php echo e($content($brandLogo)); ?>
 
 
-<!--[if BLOCK]><![endif]--><?php if($hasDarkModeBrandLogo): ?>
+<?php if($hasDarkModeBrandLogo): ?>
     <?php echo e($content($darkModeBrandLogo, isDarkMode: true)); ?>
 
-<?php endif; ?><!--[if ENDBLOCK]><![endif]-->
+<?php endif; ?>
 <?php /**PATH E:\skripsi-bahanbaku\vendor\filament\filament\src\/../resources/views/components/logo.blade.php ENDPATH**/ ?>
