@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignId('bahan_baku_id');
             $table->integer('jumlah');
             $table->string('no_surat_jalan');
+            $table->enum('status', ['Setuju', 'Ditolak', 'Menunggu'])->default('Menunggu');
             $table->string('pembawa');
             $table->string('kendaraan');
             $table->string('posisi');

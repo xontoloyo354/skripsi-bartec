@@ -33,6 +33,8 @@ class UserResource extends Resource
                     ->email()
                     ->required()
                     ->maxLength(255),
+                Forms\Components\TextInput::make('role')
+                ->label('Role'),
                 Forms\Components\DateTimePicker::make('email_verified_at'),
                 Forms\Components\TextInput::make('password')
                     ->password()
@@ -60,6 +62,9 @@ class UserResource extends Resource
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('role')
+                ->sortable()
+                ->label('Role'),
             ])
             ->filters([
                 //
@@ -90,5 +95,15 @@ class UserResource extends Resource
             'view' => Pages\ViewUser::route('/{record}'),
             'edit' => Pages\EditUser::route('/{record}/edit'),
         ];
+    }
+
+    public static function canViewAny(): bool
+    {
+        return auth()->user()->role == 'Admin';
+    }
+
+    public static function canCreate(): bool
+    {
+        return auth()->user()->role == 'Admin';
     }
 }

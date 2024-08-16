@@ -21,6 +21,7 @@ return new class extends Migration
             $table->integer('no_acuan');
             $table->string('penerima');
             $table->string('pengambil');
+            $table->enum('status', ['Setuju', 'Ditolak', 'Menunggu'])->default('Menunggu');
             $table->string('jabatan');
             $table->string('security');
             $table->string('kendaraan');

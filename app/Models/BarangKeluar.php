@@ -17,6 +17,7 @@ class BarangKeluar extends Model
        'bahan_baku_id',
        'jumlah',
        'keperluan',
+       'status',
        'acuan',
        'no_acuan',
        'penerima',

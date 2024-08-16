@@ -9,6 +9,7 @@ use App\Models\BarangMasuk;
 use Filament\Actions\Action;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Enums\FiltersLayout;
@@ -55,6 +56,27 @@ class BarangMasukResource extends Resource
                         ->placeholder('Masukan jumlah barang yang masuk ')
                         ->label('Jumlah'),
                 ]),
+                Forms\Components\ToggleButtons::make('status')
+                        ->label('Status')
+                        ->reactive()
+                        ->options([
+                            'Setuju' => 'Setuju',
+                            'Ditolak' => 'Ditolak',
+                            'Menunggu' => 'Menunggu',
+                        ])
+                        ->colors([
+                            'Setuju' => 'success',
+                            'Ditolak' => 'danger',
+                            'Menunggu' => 'info',
+                        ])
+                        ->icons([
+                            'Setuju' => 'heroicon-m-sparkles',
+                            'Ditolak' => 'heroicon-m-sparkles',
+                            'Menunggu' => 'heroicon-m-clock',
+                        ])
+                        ->live()
+                        ->default('Menunggu')
+                        ->visible(fn (Forms\Get $get): bool => auth()->user()->role === 'Kepala Gudang')
             ]),
                 Forms\Components\Section::make('Shipping Details')
                 ->schema([
@@ -105,6 +127,20 @@ class BarangMasukResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('status')
+                ->badge()
+                ->icon(fn (string $state): string => match ($state){
+                    'Setuju' => 'heroicon-o-check-circle',
+                    'Ditolak' => 'heroicon-o-check-circle',
+                    'Menunggu' => 'heroicon-o-clock',
+                })
+                ->color(fn (string $state): string => match ($state) {
+                    'Setuju' => 'success',
+                    'Ditolak' => 'danger',
+                    'Menunggu' => 'warning',
+                })
+                ->sortable()
+                ->label('Status'),
                 Tables\Columns\TextColumn::make('no_surat_masuk')->label('No. Surat Masuk')
                 ->searchable(),
                 Tables\Columns\TextColumn::make('bahanBaku.nama_barang')->label('Nama Barang')

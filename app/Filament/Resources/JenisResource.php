@@ -93,4 +93,13 @@ class JenisResource extends Resource
             'edit' => Pages\EditJenis::route('/{record}/edit'),
         ];
     }
+    public static function canViewAny(): bool
+    {
+        return auth()->user()->role == 'Admin';
+    }
+
+    public static function canCreate(): bool
+    {
+        return auth()->user()->role == 'Admin';
+    }
 }

@@ -84,4 +84,13 @@ class GolonganResource extends Resource
             'edit' => Pages\EditGolongan::route('/{record}/edit'),
         ];
     }
+    public static function canViewAny(): bool
+    {
+        return auth()->user()->role == 'Admin';
+    }
+
+    public static function canCreate(): bool
+    {
+        return auth()->user()->role == 'Admin';
+    }
 }

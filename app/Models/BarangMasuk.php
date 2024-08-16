@@ -15,6 +15,7 @@ class BarangMasuk extends Model
         'no_surat_masuk',
         'bahan_baku_id',
         'jumlah',
+        'status',
         'no_surat_jalan',
         'pembawa',
         'kendaraan',

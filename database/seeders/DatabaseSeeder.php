@@ -17,8 +17,15 @@ class DatabaseSeeder extends Seeder
        \App\Models\User::create([
         'name' => 'Bartec',
         'email' => 'bahanbaku@gmail.com',
+        'role' => 'Admin',
         'password' => Hash::make('bartec354')
         ]);
+        \App\Models\User::create([
+            'name' => 'Kepala Gudang',
+            'email' => 'kepalagudang@gmail.com',
+            'role' => 'Kepala Gudang',
+            'password' => Hash::make('bartec354')
+            ]);
         DB::table('golongans')->insert([
             ['id' => '1', 'name' => 'Bahan Baku - Plat'],
             ['id' => '2', 'name' => 'Bahan Baku - Stall'],
