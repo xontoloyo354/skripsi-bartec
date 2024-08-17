@@ -59,6 +59,7 @@ class BarangMasukResource extends Resource
                 Forms\Components\ToggleButtons::make('status')
                         ->label('Status')
                         ->reactive()
+                        ->inline()
                         ->options([
                             'Setuju' => 'Setuju',
                             'Ditolak' => 'Ditolak',
@@ -71,7 +72,7 @@ class BarangMasukResource extends Resource
                         ])
                         ->icons([
                             'Setuju' => 'heroicon-m-sparkles',
-                            'Ditolak' => 'heroicon-m-sparkles',
+                            'Ditolak' => 'heroicon-o-x-circle',
                             'Menunggu' => 'heroicon-m-clock',
                         ])
                         ->live()
@@ -131,7 +132,7 @@ class BarangMasukResource extends Resource
                 ->badge()
                 ->icon(fn (string $state): string => match ($state){
                     'Setuju' => 'heroicon-o-check-circle',
-                    'Ditolak' => 'heroicon-o-check-circle',
+                    'Ditolak' => 'heroicon-o-x-circle',
                     'Menunggu' => 'heroicon-o-clock',
                 })
                 ->color(fn (string $state): string => match ($state) {
@@ -226,6 +227,7 @@ class BarangMasukResource extends Resource
         return [
             'index' => Pages\ListBarangMasuks::route('/'),
             'create' => Pages\CreateBarangMasuk::route('/create'),
+            'view' => Pages\ViewBarangMasuk::route('/{record}'),
             'edit' => Pages\EditBarangMasuk::route('/{record}/edit'),
         ];
     }

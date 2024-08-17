@@ -27,6 +27,16 @@ class StatsAdminOverview extends BaseWidget
         $totalStokMasuk = BarangMasuk::sum('jumlah');
         ;
 
+         // Mengambil data Barang Keluar dan mengelompokkan berdasarkan Bahan Baku
+        $stokKeluarPerBarang = BarangKeluar::with('bahanBaku')
+        ->orderBy('jumlah', 'desc')
+        ->take(10)
+        ->get() // Batasi jumlah barang yang diambil untuk chart (opsional)
+        ->pluck('jumlah', 'bahanBaku.nama_barang')
+        ->toArray();
+        $totalStokKeluar = BarangKeluar::sum('jumlah');
+
+        
         $lowStockItems = BahanBaku::where('stock', '<=', 10)->with(['golongan', 'jenis'])->get(); // Misalkan 10 adalah batas stok minimum
         $lowStockDescriptions = $lowStockItems->take(3)->map(function ($item) {
             return "{$item->golongan->name} {$item->jenis->name} stok rendah";
@@ -36,10 +46,6 @@ class StatsAdminOverview extends BaseWidget
         if ($hiddenItemsCount > 0) {
             $lowStockDescriptions .= ' dan ' . $hiddenItemsCount . ' item lainnya';
         }
-       
-
-                
-
         return [
             Stat::make('Bahan Baku', BahanBaku::query()->count())
             ->description('Total Bahan Baku')
@@ -57,14 +63,15 @@ class StatsAdminOverview extends BaseWidget
             ->color('success'),
             
             Stat::make('Barang Bahan Baku Masuk', $totalStokMasuk)
-                ->description('Total Stok Barang Baku In')
-                ->descriptionIcon('heroicon-m-archive-box-arrow-down')
+                ->description('Total Stok Barang Baku Masuk')
+                ->descriptionIcon('heroicon-m-archive-box-arrow-down')  
                 ->chart(array_values($stokMasukPerBarang))
                 ->color('success'),
 
-            Stat::make('Barang Bahan Baku Keluar', BarangKeluar::query()->count())
-                ->description('Barang Baku Out')
+                Stat::make('Barang Bahan Baku Keluar', $totalStokKeluar)
+                ->description('Total Stok Barang Baku Keluar')
                 ->descriptionIcon('heroicon-m-arrow-trending-down')
+                ->chart(array_values($stokKeluarPerBarang))
                 ->color('danger'),
 
             // Menambahkan statistik stok yang hampir habis

@@ -1,16 +1,16 @@
 <?php
 
-namespace App\Filament\Resources\BarangMasukResource\Pages;
+namespace App\Filament\Resources\BarangKeluarResource\Pages;
 
-use App\Filament\Resources\BarangMasukResource;
+use App\Filament\Resources\BarangKeluarResource;
 use App\Models\User;
 use Filament\Actions;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
 
-class ViewBarangMasuk extends ViewRecord
+class ViewBarangKeluar extends ViewRecord
 {
-    protected static string $resource = BarangMasukResource::class;
+    protected static string $resource = BarangKeluarResource::class;
 
     protected function getHeaderActions(): array
     {
@@ -30,7 +30,7 @@ class ViewBarangMasuk extends ViewRecord
                 foreach ($users as $user) {
                     Notification::make()
                         ->title('Barang telah disetujui.')
-                        ->body("No surat jalan {$this->record->no_surat_jalan} telah disetujui.")
+                        ->body("No surat jalan {$this->record->no_surat_keluar} telah disetujui.")
                         ->success()
                         ->send()
                         ->sendToDatabase($user);
@@ -53,7 +53,7 @@ class ViewBarangMasuk extends ViewRecord
                 foreach ($users as $user) {
                     Notification::make()
                         ->title('Barang telah ditolak.')
-                        ->body("No surat jalan {$this->record->no_surat_jalan} telah ditolak.")
+                        ->body("No surat jalan {$this->record->no_surat_keluar} telah ditolak.")
                         ->danger()
                         ->send()
                         ->sendToDatabase($user);

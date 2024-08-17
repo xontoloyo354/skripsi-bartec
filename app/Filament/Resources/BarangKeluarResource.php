@@ -52,7 +52,8 @@ class BarangKeluarResource extends Resource
                         ->schema([
                             Forms\Components\TextInput::make('no_surat_keluar')
                         ->label('No. Surat Keluar')
-                        ->required(),
+                        ->required()
+                        ->columnSpan(3),
                         Forms\Components\Grid::make(3)
                         ->schema([
                             Forms\Components\TextInput::make('acuan')
@@ -68,6 +69,28 @@ class BarangKeluarResource extends Resource
                     ->placeholder('Tujuan')
                     ->required(),        
                                 ]),
+                                Forms\Components\ToggleButtons::make('status')
+                        ->label('Status')
+                        ->reactive()
+                        ->inline()
+                        ->options([
+                            'Setuju' => 'Setuju',
+                            'Ditolak' => 'Ditolak',
+                            'Menunggu' => 'Menunggu',
+                        ])
+                        ->colors([
+                            'Setuju' => 'success',
+                            'Ditolak' => 'danger',
+                            'Menunggu' => 'info',
+                        ])
+                        ->icons([
+                            'Setuju' => 'heroicon-m-sparkles',
+                            'Ditolak' => 'heroicon-o-x-circle',
+                            'Menunggu' => 'heroicon-m-clock',
+                        ])
+                        ->live()
+                        ->default('Menunggu')
+                        ->visible(fn (Forms\Get $get): bool => auth()->user()->role === 'Kepala Gudang'),
                         ]),
                     ]),
                     Forms\Components\Section::make('Identitas')
@@ -130,6 +153,20 @@ class BarangKeluarResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('status')
+                ->badge()
+                ->icon(fn (string $state): string => match ($state){
+                    'Setuju' => 'heroicon-o-check-circle',
+                    'Ditolak' => 'heroicon-o-x-circle',
+                    'Menunggu' => 'heroicon-o-clock',
+                })
+                ->color(fn (string $state): string => match ($state) {
+                    'Setuju' => 'success',
+                    'Ditolak' => 'danger',
+                    'Menunggu' => 'warning',
+                })
+                ->sortable()
+                ->label('Status'),
                 TextColumn::make('no_surat_keluar')
                     ->label('No. Surat Keluar')
                     ->sortable()
@@ -244,38 +281,39 @@ class BarangKeluarResource extends Resource
         ];
     }
 
-    public static function infolist(Infolist $infolist): Infolist
-{
-    return $infolist
-        ->schema([
-            Section::make('Barang Details')
-            ->schema([
-                TextEntry::make('bahanBaku.nama_barang')
-            ]),
-            Section::make('Shipping Details')
-            ->schema([
-                TextEntry::make('no_surat_keluar')->label('No Surat Keluar'),
-                TextEntry::make('acuan')->label('Acuan'),
-                TextEntry::make('no_acuan'),
-                TextEntry::make('tujuan'),
-            ])->columns(2),
-            Section::make('Identitas')
-            ->schema([
-                TextEntry::make('penerima'),
-                TextEntry::make('pengambil'),
-                TextEntry::make('jabatan'),
-                TextEntry::make('security'),
-                TextEntry::make('kendaraan'),
-                TextEntry::make('no_plat'),
-            ])->columns(3)
-            ]);
-}
+//     public static function infolist(Infolist $infolist): Infolist
+// {
+//     return $infolist
+//         ->schema([
+//             Section::make('Barang Details')
+//             ->schema([
+//                 TextEntry::make('bahanBaku.nama_barang')
+//             ]),
+//             Section::make('Shipping Details')
+//             ->schema([
+//                 TextEntry::make('no_surat_keluar')->label('No Surat Keluar'),
+//                 TextEntry::make('acuan')->label('Acuan'),
+//                 TextEntry::make('no_acuan'),
+//                 TextEntry::make('tujuan'),
+//             ])->columns(2),
+//             Section::make('Identitas')
+//             ->schema([
+//                 TextEntry::make('penerima'),
+//                 TextEntry::make('pengambil'),
+//                 TextEntry::make('jabatan'),
+//                 TextEntry::make('security'),
+//                 TextEntry::make('kendaraan'),
+//                 TextEntry::make('no_plat'),
+//             ])->columns(3)
+//             ]);
+// }
 
     public static function getPages(): array
     {
         return [
             'index' => Pages\ListBarangKeluars::route('/'),
             'create' => Pages\CreateBarangKeluar::route('/create'),
+            'view' => Pages\ViewBarangKeluar::route('/{record}'),
             'edit' => Pages\EditBarangKeluar::route('/{record}/edit')
             ,
         ];

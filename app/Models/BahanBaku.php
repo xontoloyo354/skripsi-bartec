@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Log;
 
 class BahanBaku extends Model
 {
@@ -59,43 +60,37 @@ class BahanBaku extends Model
         self::creating(function($model){
         $model->kode_material = self::generateKodeMaterial($model);
       });
-
-      static::created(function ($bahanBaku) {
-        $users = User::where('name', 'Bartec')->get();
-
-        foreach ($users as $user) {
-            Notification::make($bahanBaku)
-                ->title('New Bahan Baku Created')
-                ->icon('heroicon-o-plus-circle')
-                ->body('A new Bahan Baku  has been created.')
-                ->sendToDatabase($user);
-        }
-    });
-    static::updated(function ($bahanBaku) {
-        try {
-            $lowStockItems = BahanBaku::where('stock', '<=', 10)->count();
-            $users = User::where('name', 'Bartec')->get();
-
-            foreach ($users as $user) {
-                Notification::make()
-                    ->title('Bahan Baku Updated')
-                    ->success()
-                    ->icon('heroicon-o-exclamation-circle')
-                    ->iconColor('warning')
-                    ->body("There are {$lowStockItems} items with low stock.")
-                    ->actions([
-                        Action::make('view')
-                            ->button()
-                            ->url(route('filament.admin.resources.bahan-bakus.index'),shouldOpenInNewTab: true) // Adjust this route as necessary
-                            ->markAsRead(),
-                        ])
-                    ->sendToDatabase($user);
-            }
-        } catch (\Exception $e) {
-            // Handle the exception
-            // Log the error or take necessary action
-        }
-    });
+      
+    // static::updated(function ($bahanBaku) {
+    //     try {
+    //         // Check if the stock field is dirty and actually changed
+    //         if ($bahanBaku->isDirty('stock')) {
+    //             // Make sure stock change is significant
+    //             if ($bahanBaku->getOriginal('stock') !== $bahanBaku->stock) {
+    //                 $lowStockItems = BahanBaku::where('stock', '<=', 10)->count();
+    //                 $users = User::where('role', 'Admin')->get();
+    
+    //                 foreach ($users as $user) {
+    //                     Notification::make()
+    //                         ->title('Bahan Baku Updated')
+    //                         ->success()
+    //                         ->icon('heroicon-o-exclamation-circle')
+    //                         ->iconColor('warning')
+    //                         ->body("There are {$lowStockItems} items with low stock.")
+    //                         ->actions([
+    //                             Action::make('view')
+    //                                 ->button()
+    //                                 ->url(route('filament.admin.resources.bahan-bakus.index'), shouldOpenInNewTab: true) // Adjust this route as necessary
+    //                                 ->markAsRead(),
+    //                         ])
+    //                         ->sendToDatabase($user);    
+    //                 }
+    //             }
+    //         }
+    //     } catch (\Exception $e) {
+    //         Log::error('Error in BahanBaku Updated Event', ['exception' => $e]);
+    //     }
+    // });
 }
     public static function reorderNomor()
     {

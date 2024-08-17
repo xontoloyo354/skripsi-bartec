@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Models\BahanBaku;
+use App\Observers\BahanBakuObserver;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\ServiceProvider;
 
@@ -20,6 +22,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        BahanBaku::observe(BahanBakuObserver::class);
     }
 }
