@@ -12,6 +12,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Gate;
 
 class UserResource extends Resource
 {
@@ -34,7 +35,8 @@ class UserResource extends Resource
                     ->required()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('role')
-                ->label('Role'),
+                ->label('Role')
+                ->visible(fn (Forms\Get $get): bool => auth()->user()->role === 'Admin'),
                 Forms\Components\DateTimePicker::make('email_verified_at'),
                 Forms\Components\TextInput::make('password')
                     ->password()
@@ -98,9 +100,9 @@ class UserResource extends Resource
     }
 
     public static function canViewAny(): bool
-    {
-        return auth()->user()->role == 'Admin';
-    }
+{
+    return in_array(auth()->user()->role, ['Admin', 'Kepala Gudang']);
+}
 
     public static function canCreate(): bool
     {
