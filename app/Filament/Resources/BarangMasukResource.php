@@ -16,6 +16,7 @@ use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Carbon;
 
@@ -76,6 +77,7 @@ class BarangMasukResource extends Resource
                             'Menunggu' => 'heroicon-m-clock',
                         ])
                         ->live()
+                        ->disabled()
                         ->default('Menunggu')
                         ->visible(fn (Forms\Get $get): bool => auth()->user()->role === 'Kepala Gudang')
             ]),
@@ -232,5 +234,13 @@ class BarangMasukResource extends Resource
         ];
     }
 
-   
+    public static function canCreate(): bool
+    {
+        return auth()->user()->role == 'Admin';
+    }
+
+    public static function canEdit(Model $record): bool
+    {
+        return auth()->user()->role == 'Admin';
+    }
 }   

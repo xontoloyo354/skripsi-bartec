@@ -19,9 +19,9 @@ class BahanBakuObserver
 
         foreach ($users as $user) {
             Notification::make()
-                ->title('New Bahan Baku Created')
+                ->title('Bahan Baku Baru')
                 ->icon('heroicon-o-plus-circle')
-                ->body('A new Bahan Baku has been created.')
+                ->body('Bahan baku baru telah dibuat.')
                 ->sendToDatabase($user);
         }
     }
@@ -30,38 +30,32 @@ class BahanBakuObserver
      * Handle the BahanBaku "updated" event.
      */
     public function updated(BahanBaku $bahanBaku): void
-{
-    try {
-        // Check if the stock field is dirty (changed)
-        if ($bahanBaku->isDirty('stock')) {
-            $lowStockItems = BahanBaku::where('stock', '<=', 10)->count();
-            $users = User::where('role', 'Admin')->get();
+    {
+        try {
+            // Check if only the stock field is dirty (changed)
+            if ($bahanBaku->isDirty('stock') && $bahanBaku->getOriginal('stock') !== $bahanBaku->stock) {
+                $lowStockItems = BahanBaku::where('stock', '<=', 10)->count();
+                $users = User::where('role', 'Admin')->get();
 
-            // Check if there are any users with the Admin role
-            if ($users->count() > 0) {
                 foreach ($users as $user) {
-                    // Check if the stock field is less than or equal to 10
-                    if ($bahanBaku->stock <= 10) {
-                        Notification::make()
-                            ->title('Bahan Baku Updated')
-                            ->success()
-                            ->icon('heroicon-o-exclamation-circle')
-                            ->iconColor('warning')
-                            ->body("There are {$lowStockItems} items with low stock.")
-                            ->actions([
-                                Action::make('view')
-                                    ->button()
-                                    ->url(route('filament.admin.resources.bahan-bakus.index'), shouldOpenInNewTab: true) // Adjust this route as necessary
-                                    ->markAsRead(),
-                            ])
-                            ->sendToDatabase($user);
-                    }
+                    Notification::make()
+                        ->title('Bahan Baku Updated')
+                        ->success()
+                        ->icon('heroicon-o-exclamation-circle')
+                        ->iconColor('warning')
+                        ->body("There are {$lowStockItems} items with low stock.")
+                        ->actions([
+                            Action::make('view')
+                                ->button()
+                                ->url(route('filament.admin.resources.bahan-bakus.index'), shouldOpenInNewTab: true) // Adjust this route as necessary
+                                ->markAsRead(),
+                        ])
+                        ->sendToDatabase($user);    
                 }
             }
-        }
-    } catch (\Exception $e) {
-        // Log the exception or perform any necessary error handling
-        Log::error($e->getMessage());
+        }catch (\Exception $e) {
+            // Log the exception or perform any necessary error handling
+            Log::error($e->getMessage());
     }
 }
 

@@ -6,6 +6,7 @@ use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class BarangMasuk extends Model
 {
@@ -29,11 +30,11 @@ class BarangMasuk extends Model
 
     protected static function booted()
 {
-    static::saved(function ($barangMasuk) {
-        $bahanBaku = $barangMasuk->bahanBaku;
-        $bahanBaku->stock += $barangMasuk->jumlah;
-        $bahanBaku->save();
-    });
+    // static::saved(function ($barangMasuk) {
+    //     $bahanBaku = $barangMasuk->bahanBaku;
+    //     $bahanBaku->stock += $barangMasuk->jumlah;
+    //     $bahanBaku->save();
+    // });
     static::created(function ($barangMasuk) {
         $barangMasuk->updateBahanBakuStock();
         $barangMasuk->sendNotification();

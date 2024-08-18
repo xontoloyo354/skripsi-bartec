@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('barang_masuks', function (Blueprint $table) {
             $table->id();
             $table->string('no_surat_masuk');
-            $table->foreignId('bahan_baku_id');
+            $table->foreignId('bahan_baku_id')->constrained()->cascadeOnDelete();
             $table->integer('jumlah');
             $table->string('no_surat_jalan');
             $table->enum('status', ['Setuju', 'Ditolak', 'Menunggu'])->default('Menunggu');

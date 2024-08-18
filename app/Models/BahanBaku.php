@@ -43,10 +43,10 @@ class BahanBaku extends Model
     {
         parent::boot();
 
-        static::saving(function ($model) {
-            $model->kode_material = self::generateKodeMaterial($model);
-            $model->nama_barang = "{$model->golongan->name} - {$model->jenis->name} - {$model->sub_jenis} - {$model->material}";
-        });
+        // static::saving(function ($model) {
+        //     $model->kode_material = self::generateKodeMaterial($model);
+        //     $model->nama_barang = "{$model->golongan->name} - {$model->jenis->name} - {$model->sub_jenis} - {$model->material}";
+        // });
 
         static::deleted(function ($model) {
             static::reorderNomor();
@@ -61,36 +61,36 @@ class BahanBaku extends Model
         $model->kode_material = self::generateKodeMaterial($model);
       });
       
-    // static::updated(function ($bahanBaku) {
-    //     try {
-    //         // Check if the stock field is dirty and actually changed
-    //         if ($bahanBaku->isDirty('stock')) {
-    //             // Make sure stock change is significant
-    //             if ($bahanBaku->getOriginal('stock') !== $bahanBaku->stock) {
-    //                 $lowStockItems = BahanBaku::where('stock', '<=', 10)->count();
-    //                 $users = User::where('role', 'Admin')->get();
+    static::updated(function ($bahanBaku) {
+        try {
+            // Check if the stock field is dirty and actually changed
+            if ($bahanBaku->isDirty('stock')) {
+                // Make sure stock change is significant
+                if ($bahanBaku->getOriginal('stock') !== $bahanBaku->stock) {
+                    $lowStockItems = BahanBaku::where('stock', '<=', 10)->count();
+                    $users = User::where('role', 'Admin')->get();
     
-    //                 foreach ($users as $user) {
-    //                     Notification::make()
-    //                         ->title('Bahan Baku Updated')
-    //                         ->success()
-    //                         ->icon('heroicon-o-exclamation-circle')
-    //                         ->iconColor('warning')
-    //                         ->body("There are {$lowStockItems} items with low stock.")
-    //                         ->actions([
-    //                             Action::make('view')
-    //                                 ->button()
-    //                                 ->url(route('filament.admin.resources.bahan-bakus.index'), shouldOpenInNewTab: true) // Adjust this route as necessary
-    //                                 ->markAsRead(),
-    //                         ])
-    //                         ->sendToDatabase($user);    
-    //                 }
-    //             }
-    //         }
-    //     } catch (\Exception $e) {
-    //         Log::error('Error in BahanBaku Updated Event', ['exception' => $e]);
-    //     }
-    // });
+                    foreach ($users as $user) {
+                        Notification::make()
+                            ->title('Bahan Baku Updated')
+                            ->success()
+                            ->icon('heroicon-o-exclamation-circle')
+                            ->iconColor('warning')
+                            ->body("There are {$lowStockItems} items with low stock.")
+                            ->actions([
+                                Action::make('view')
+                                    ->button()
+                                    ->url(route('filament.admin.resources.bahan-bakus.index'), shouldOpenInNewTab: true) // Adjust this route as necessary
+                                    ->markAsRead(),
+                            ])
+                            ->sendToDatabase($user);    
+                    }
+                }
+            }
+        } catch (\Exception $e) {
+            Log::error('Error in BahanBaku Updated Event', ['exception' => $e]);
+        }
+    });
 }
     public static function reorderNomor()
     {
