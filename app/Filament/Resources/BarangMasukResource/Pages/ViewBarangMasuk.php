@@ -29,7 +29,7 @@ class ViewBarangMasuk extends ViewRecord
 
                 foreach ($users as $user) {
                     Notification::make()
-                        ->title('Barang telah disetujui.')
+                        ->title('Barang Masuk telah disetujui.')
                         ->body("No surat jalan {$this->record->no_surat_jalan} telah disetujui.")
                         ->success()
                         ->send()
@@ -52,7 +52,7 @@ class ViewBarangMasuk extends ViewRecord
 
                 foreach ($users as $user) {
                     Notification::make()
-                        ->title('Barang telah ditolak.')
+                        ->title('Barang Masuk telah ditolak.')
                         ->body("No surat jalan {$this->record->no_surat_jalan} telah ditolak.")
                         ->danger()
                         ->send()

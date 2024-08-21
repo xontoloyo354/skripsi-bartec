@@ -32,7 +32,6 @@ class BahanBakuObserver
     public function updated(BahanBaku $bahanBaku): void
     {
         try {
-            // Check if only the stock field is dirty (changed)
             if ($bahanBaku->isDirty('stock') && $bahanBaku->getOriginal('stock') !== $bahanBaku->stock) {
                 $lowStockItems = BahanBaku::where('stock', '<=', 10)->count();
                 $users = User::where('role', 'Admin')->get();
@@ -47,14 +46,13 @@ class BahanBakuObserver
                         ->actions([
                             Action::make('view')
                                 ->button()
-                                ->url(route('filament.admin.resources.bahan-bakus.index'), shouldOpenInNewTab: true) // Adjust this route as necessary
+                                ->url(route('filament.admin.resources.bahan-bakus.index'), shouldOpenInNewTab: true) 
                                 ->markAsRead(),
                         ])
                         ->sendToDatabase($user);    
                 }
             }
         }catch (\Exception $e) {
-            // Log the exception or perform any necessary error handling
             Log::error($e->getMessage());
     }
 }
