@@ -20,6 +20,7 @@ use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Carbon;
 use Symfony\Component\CssSelector\Node\FunctionNode;
@@ -317,6 +318,15 @@ class BarangKeluarResource extends Resource
             'edit' => Pages\EditBarangKeluar::route('/{record}/edit')
             ,
         ];
+    }
+    public static function canCreate(): bool
+    {
+        return auth()->user()->role == 'Admin';
+    }
+
+    public static function canEdit(Model $record): bool
+    {
+        return auth()->user()->role == 'Admin';
     }
 }
 namespace App\Filament\Resources\BarangKeluarResource\Pages;
