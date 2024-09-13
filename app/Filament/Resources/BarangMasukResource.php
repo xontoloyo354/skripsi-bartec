@@ -24,7 +24,7 @@ class BarangMasukResource extends Resource
 {
     protected static ?string $model = BarangMasuk::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-pencil-square';
 
     protected static ?string $navigationGroup = 'Form';
 
@@ -38,8 +38,7 @@ class BarangMasukResource extends Resource
     return $form
         ->schema([
             Forms\Components\TextInput::make('no_surat_masuk')
-                ->label('No. Surat Masuk')
-                ->disabled(),
+                ->label('No. Surat Masuk'),
             Forms\Components\Section::make('Barang Details')
                 ->schema([
                     Forms\Components\Grid::make(2)

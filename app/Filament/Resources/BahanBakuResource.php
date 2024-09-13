@@ -26,7 +26,7 @@ class BahanBakuResource extends Resource
 {
     protected static ?string $model = BahanBaku::class;
 
-    protected static ?string $navigationIcon = 'heroicon-s-archive-box';
+    protected static ?string $navigationIcon = 'heroicon-o-circle-stack';
 
     protected static ?string $navigationLabel = 'Bahan Baku';
 

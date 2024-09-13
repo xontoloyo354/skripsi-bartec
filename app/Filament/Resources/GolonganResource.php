@@ -19,7 +19,7 @@ class GolonganResource extends Resource
 {
     protected static ?string $model = Golongan::class;
 
-    protected static ?string $navigationIcon = 'heroicon-s-document';
+    protected static ?string $navigationIcon = 'heroicon-o-tag';
 
     protected static ?string $navigationLabel = 'Golongan';
 

@@ -18,7 +18,7 @@ class JenisResource extends Resource
 {
     protected static ?string $model = Jenis::class;
 
-    protected static ?string $navigationIcon = 'heroicon-s-document';
+    protected static ?string $navigationIcon = 'heroicon-o-banknotes';
 
     protected static ?string $navigationLabel = 'Jenis';
 

@@ -54,17 +54,25 @@ class BarangMasuk extends Model
     {
         parent::boot();
 
-        self::creating(function ($model) {
-            $model->no_surat_masuk = self::generateNoSuratMasuk();
-        });
+        // self::creating(function ($model) {
+        //     $model->no_surat_masuk = self::generateNoSuratMasuk();
+        // });
     }
 
-    public static function generateNoSuratMasuk()
-    {
-        $latestRecord = self::latest()->first();
-        $number = $latestRecord ? intval(substr($latestRecord->no_surat_masuk, -5)) + 1 : 1;
-        return 'BB/IN' . str_pad($number, 5, '0', STR_PAD_LEFT);
-    }
+    // public static function generateNoSuratMasuk()
+    // {
+    //     $latestRecord = self::latest()->first();
+    //     $number = $latestRecord ? intval(substr($latestRecord->no_surat_masuk, -5)) + 1 : 1;
+    //     return 'BB/IN/' . str_pad($number, 5, '0', STR_PAD_LEFT);
+    // }
+//     public static function generateNoSuratMasuk()
+// {
+//     // Generate 5 digit random number
+//     $randomNumber = mt_rand(10000, 99999);
+
+//     // Return the formatted no_surat_masuk
+//     return 'BB/IN/' . $randomNumber;
+// }
 
     public function bahanBaku()
     {
